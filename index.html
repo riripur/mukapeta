@@ -1,0 +1,2173 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2.4.0/src/easy-button.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.min.css" />
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="data/PartaiUmmat_1.js"></script>
+        <script src="data/PartaiPersatuanPembangunan_2.js"></script>
+        <script src="data/PartaiPerindo_3.js"></script>
+        <script src="data/PartaiSolidaritasIndonesia_4.js"></script>
+        <script src="data/PartaiDemokrat_5.js"></script>
+        <script src="data/PartaiBulanBintang_6.js"></script>
+        <script src="data/PartaiAmanatNasional_7.js"></script>
+        <script src="data/PartaiGardaRepublikIndonesia_8.js"></script>
+        <script src="data/PartaiHatiNuraniRakyat_9.js"></script>
+        <script src="data/PartaiKebangkitanNusantara_10.js"></script>
+        <script src="data/PartaiKeadilanSejahtera_11.js"></script>
+        <script src="data/PartaiGelombangRakyatIndonesia_12.js"></script>
+        <script src="data/PartaiBuruh_13.js"></script>
+        <script src="data/PartaiNasDem_14.js"></script>
+        <script src="data/PartaiGolonganKarya_15.js"></script>
+        <script src="data/PartaiDemokrasiIndonesiaPerjuangan_16.js"></script>
+        <script src="data/PartaiGerakanIndonesiaRaya_17.js"></script>
+        <script src="data/PartaiKebangkitanBangsa_18.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2.4.0/src/easy-button.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-minimap/3.6.1/Control.MiniMap.min.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        })
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+        }
+        map.createPane('pane_OpenStreetMap_0');
+        map.getPane('pane_OpenStreetMap_0').style.zIndex = 400;
+        var layer_OpenStreetMap_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OpenStreetMap_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_OpenStreetMap_0;
+        map.addLayer(layer_OpenStreetMap_0);
+        function pop_PartaiUmmat_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">UMMAT</th>\
+                        <td>' + (feature.properties['UMMAT'] !== null ? autolinker.link(feature.properties['UMMAT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiUmmat_1_0(feature) {
+            if (feature.properties['UMMAT'] >= 4728.000000 && feature.properties['UMMAT'] <= 5594.400000 ) {
+                return {
+                pane: 'pane_PartaiUmmat_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['UMMAT'] >= 5594.400000 && feature.properties['UMMAT'] <= 8721.600000 ) {
+                return {
+                pane: 'pane_PartaiUmmat_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,174,97,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['UMMAT'] >= 8721.600000 && feature.properties['UMMAT'] <= 12542.000000 ) {
+                return {
+                pane: 'pane_PartaiUmmat_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,191,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['UMMAT'] >= 12542.000000 && feature.properties['UMMAT'] <= 16079.000000 ) {
+                return {
+                pane: 'pane_PartaiUmmat_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(171,221,164,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['UMMAT'] >= 16079.000000 && feature.properties['UMMAT'] <= 18947.000000 ) {
+                return {
+                pane: 'pane_PartaiUmmat_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,131,186,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiUmmat_1');
+        map.getPane('pane_PartaiUmmat_1').style.zIndex = 401;
+        map.getPane('pane_PartaiUmmat_1').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiUmmat_1 = new L.geoJson(json_PartaiUmmat_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiUmmat_1',
+            layerName: 'layer_PartaiUmmat_1',
+            pane: 'pane_PartaiUmmat_1',
+            onEachFeature: pop_PartaiUmmat_1,
+            style: style_PartaiUmmat_1_0,
+        });
+        bounds_group.addLayer(layer_PartaiUmmat_1);
+        map.addLayer(layer_PartaiUmmat_1);
+        function pop_PartaiPersatuanPembangunan_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PPP</th>\
+                        <td>' + (feature.properties['PPP'] !== null ? autolinker.link(feature.properties['PPP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiPersatuanPembangunan_2_0(feature) {
+            if (feature.properties['PPP'] >= 3185.000000 && feature.properties['PPP'] <= 3915.400000 ) {
+                return {
+                pane: 'pane_PartaiPersatuanPembangunan_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PPP'] >= 3915.400000 && feature.properties['PPP'] <= 6970.800000 ) {
+                return {
+                pane: 'pane_PartaiPersatuanPembangunan_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,174,97,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PPP'] >= 6970.800000 && feature.properties['PPP'] <= 11289.600000 ) {
+                return {
+                pane: 'pane_PartaiPersatuanPembangunan_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,192,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PPP'] >= 11289.600000 && feature.properties['PPP'] <= 15277.800000 ) {
+                return {
+                pane: 'pane_PartaiPersatuanPembangunan_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(166,217,106,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PPP'] >= 15277.800000 && feature.properties['PPP'] <= 16809.000000 ) {
+                return {
+                pane: 'pane_PartaiPersatuanPembangunan_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(26,150,65,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiPersatuanPembangunan_2');
+        map.getPane('pane_PartaiPersatuanPembangunan_2').style.zIndex = 402;
+        map.getPane('pane_PartaiPersatuanPembangunan_2').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiPersatuanPembangunan_2 = new L.geoJson(json_PartaiPersatuanPembangunan_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiPersatuanPembangunan_2',
+            layerName: 'layer_PartaiPersatuanPembangunan_2',
+            pane: 'pane_PartaiPersatuanPembangunan_2',
+            onEachFeature: pop_PartaiPersatuanPembangunan_2,
+            style: style_PartaiPersatuanPembangunan_2_0,
+        });
+        bounds_group.addLayer(layer_PartaiPersatuanPembangunan_2);
+        map.addLayer(layer_PartaiPersatuanPembangunan_2);
+        function pop_PartaiPerindo_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PERINDO</th>\
+                        <td>' + (feature.properties['PERINDO'] !== null ? autolinker.link(feature.properties['PERINDO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiPerindo_3_0(feature) {
+            if (feature.properties['PERINDO'] >= 783.000000 && feature.properties['PERINDO'] <= 1722.200000 ) {
+                return {
+                pane: 'pane_PartaiPerindo_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PERINDO'] >= 1722.200000 && feature.properties['PERINDO'] <= 2054.800000 ) {
+                return {
+                pane: 'pane_PartaiPerindo_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,174,97,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PERINDO'] >= 2054.800000 && feature.properties['PERINDO'] <= 2144.000000 ) {
+                return {
+                pane: 'pane_PartaiPerindo_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,191,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PERINDO'] >= 2144.000000 && feature.properties['PERINDO'] <= 2382.800000 ) {
+                return {
+                pane: 'pane_PartaiPerindo_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(171,217,233,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PERINDO'] >= 2382.800000 && feature.properties['PERINDO'] <= 3194.000000 ) {
+                return {
+                pane: 'pane_PartaiPerindo_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(44,123,182,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiPerindo_3');
+        map.getPane('pane_PartaiPerindo_3').style.zIndex = 403;
+        map.getPane('pane_PartaiPerindo_3').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiPerindo_3 = new L.geoJson(json_PartaiPerindo_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiPerindo_3',
+            layerName: 'layer_PartaiPerindo_3',
+            pane: 'pane_PartaiPerindo_3',
+            onEachFeature: pop_PartaiPerindo_3,
+            style: style_PartaiPerindo_3_0,
+        });
+        bounds_group.addLayer(layer_PartaiPerindo_3);
+        map.addLayer(layer_PartaiPerindo_3);
+        function pop_PartaiSolidaritasIndonesia_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PSI</th>\
+                        <td>' + (feature.properties['PSI'] !== null ? autolinker.link(feature.properties['PSI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiSolidaritasIndonesia_4_0(feature) {
+            if (feature.properties['PSI'] >= 7627.000000 && feature.properties['PSI'] <= 11375.800000 ) {
+                return {
+                pane: 'pane_PartaiSolidaritasIndonesia_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,235,226,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PSI'] >= 11375.800000 && feature.properties['PSI'] <= 13610.200000 ) {
+                return {
+                pane: 'pane_PartaiSolidaritasIndonesia_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(251,180,185,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PSI'] >= 13610.200000 && feature.properties['PSI'] <= 14761.400000 ) {
+                return {
+                pane: 'pane_PartaiSolidaritasIndonesia_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(247,104,161,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PSI'] >= 14761.400000 && feature.properties['PSI'] <= 16631.200000 ) {
+                return {
+                pane: 'pane_PartaiSolidaritasIndonesia_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(197,27,138,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PSI'] >= 16631.200000 && feature.properties['PSI'] <= 22392.000000 ) {
+                return {
+                pane: 'pane_PartaiSolidaritasIndonesia_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(122,1,119,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiSolidaritasIndonesia_4');
+        map.getPane('pane_PartaiSolidaritasIndonesia_4').style.zIndex = 404;
+        map.getPane('pane_PartaiSolidaritasIndonesia_4').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiSolidaritasIndonesia_4 = new L.geoJson(json_PartaiSolidaritasIndonesia_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiSolidaritasIndonesia_4',
+            layerName: 'layer_PartaiSolidaritasIndonesia_4',
+            pane: 'pane_PartaiSolidaritasIndonesia_4',
+            onEachFeature: pop_PartaiSolidaritasIndonesia_4,
+            style: style_PartaiSolidaritasIndonesia_4_0,
+        });
+        bounds_group.addLayer(layer_PartaiSolidaritasIndonesia_4);
+        map.addLayer(layer_PartaiSolidaritasIndonesia_4);
+        function pop_PartaiDemokrat_5(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DEMOKRAT</th>\
+                        <td>' + (feature.properties['DEMOKRAT'] !== null ? autolinker.link(feature.properties['DEMOKRAT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiDemokrat_5_0(feature) {
+            if (feature.properties['DEMOKRAT'] >= 3057.000000 && feature.properties['DEMOKRAT'] <= 4637.000000 ) {
+                return {
+                pane: 'pane_PartaiDemokrat_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(202,0,32,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['DEMOKRAT'] >= 4637.000000 && feature.properties['DEMOKRAT'] <= 8699.800000 ) {
+                return {
+                pane: 'pane_PartaiDemokrat_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(244,165,130,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['DEMOKRAT'] >= 8699.800000 && feature.properties['DEMOKRAT'] <= 11934.600000 ) {
+                return {
+                pane: 'pane_PartaiDemokrat_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['DEMOKRAT'] >= 11934.600000 && feature.properties['DEMOKRAT'] <= 13865.200000 ) {
+                return {
+                pane: 'pane_PartaiDemokrat_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(186,186,186,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['DEMOKRAT'] >= 13865.200000 && feature.properties['DEMOKRAT'] <= 16850.000000 ) {
+                return {
+                pane: 'pane_PartaiDemokrat_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(64,64,64,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiDemokrat_5');
+        map.getPane('pane_PartaiDemokrat_5').style.zIndex = 405;
+        map.getPane('pane_PartaiDemokrat_5').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiDemokrat_5 = new L.geoJson(json_PartaiDemokrat_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiDemokrat_5',
+            layerName: 'layer_PartaiDemokrat_5',
+            pane: 'pane_PartaiDemokrat_5',
+            onEachFeature: pop_PartaiDemokrat_5,
+            style: style_PartaiDemokrat_5_0,
+        });
+        bounds_group.addLayer(layer_PartaiDemokrat_5);
+        map.addLayer(layer_PartaiDemokrat_5);
+        function pop_PartaiBulanBintang_6(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PBB</th>\
+                        <td>' + (feature.properties['PBB'] !== null ? autolinker.link(feature.properties['PBB'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiBulanBintang_6_0(feature) {
+            if (feature.properties['PBB'] >= 270.000000 && feature.properties['PBB'] <= 291.600000 ) {
+                return {
+                pane: 'pane_PartaiBulanBintang_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(202,0,32,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PBB'] >= 291.600000 && feature.properties['PBB'] <= 421.800000 ) {
+                return {
+                pane: 'pane_PartaiBulanBintang_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(244,165,130,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PBB'] >= 421.800000 && feature.properties['PBB'] <= 599.400000 ) {
+                return {
+                pane: 'pane_PartaiBulanBintang_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(247,247,247,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PBB'] >= 599.400000 && feature.properties['PBB'] <= 880.200000 ) {
+                return {
+                pane: 'pane_PartaiBulanBintang_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(146,197,222,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PBB'] >= 880.200000 && feature.properties['PBB'] <= 1437.000000 ) {
+                return {
+                pane: 'pane_PartaiBulanBintang_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(5,113,176,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiBulanBintang_6');
+        map.getPane('pane_PartaiBulanBintang_6').style.zIndex = 406;
+        map.getPane('pane_PartaiBulanBintang_6').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiBulanBintang_6 = new L.geoJson(json_PartaiBulanBintang_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiBulanBintang_6',
+            layerName: 'layer_PartaiBulanBintang_6',
+            pane: 'pane_PartaiBulanBintang_6',
+            onEachFeature: pop_PartaiBulanBintang_6,
+            style: style_PartaiBulanBintang_6_0,
+        });
+        bounds_group.addLayer(layer_PartaiBulanBintang_6);
+        map.addLayer(layer_PartaiBulanBintang_6);
+        function pop_PartaiAmanatNasional_7(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PAN</th>\
+                        <td>' + (feature.properties['PAN'] !== null ? autolinker.link(feature.properties['PAN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiAmanatNasional_7_0(feature) {
+            if (feature.properties['PAN'] >= 18514.000000 && feature.properties['PAN'] <= 20624.400000 ) {
+                return {
+                pane: 'pane_PartaiAmanatNasional_7',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(241,238,246,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PAN'] >= 20624.400000 && feature.properties['PAN'] <= 31879.400000 ) {
+                return {
+                pane: 'pane_PartaiAmanatNasional_7',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,181,216,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PAN'] >= 31879.400000 && feature.properties['PAN'] <= 39968.600000 ) {
+                return {
+                pane: 'pane_PartaiAmanatNasional_7',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(223,101,176,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PAN'] >= 39968.600000 && feature.properties['PAN'] <= 48818.000000 ) {
+                return {
+                pane: 'pane_PartaiAmanatNasional_7',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(221,28,119,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PAN'] >= 48818.000000 && feature.properties['PAN'] <= 78590.000000 ) {
+                return {
+                pane: 'pane_PartaiAmanatNasional_7',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(152,0,67,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiAmanatNasional_7');
+        map.getPane('pane_PartaiAmanatNasional_7').style.zIndex = 407;
+        map.getPane('pane_PartaiAmanatNasional_7').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiAmanatNasional_7 = new L.geoJson(json_PartaiAmanatNasional_7, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiAmanatNasional_7',
+            layerName: 'layer_PartaiAmanatNasional_7',
+            pane: 'pane_PartaiAmanatNasional_7',
+            onEachFeature: pop_PartaiAmanatNasional_7,
+            style: style_PartaiAmanatNasional_7_0,
+        });
+        bounds_group.addLayer(layer_PartaiAmanatNasional_7);
+        map.addLayer(layer_PartaiAmanatNasional_7);
+        function pop_PartaiGardaRepublikIndonesia_8(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">GARUDA</th>\
+                        <td>' + (feature.properties['GARUDA'] !== null ? autolinker.link(feature.properties['GARUDA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiGardaRepublikIndonesia_8_0(feature) {
+            if (feature.properties['GARUDA'] >= 478.000000 && feature.properties['GARUDA'] <= 519.600000 ) {
+                return {
+                pane: 'pane_PartaiGardaRepublikIndonesia_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(230,97,1,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GARUDA'] >= 519.600000 && feature.properties['GARUDA'] <= 894.800000 ) {
+                return {
+                pane: 'pane_PartaiGardaRepublikIndonesia_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,184,99,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GARUDA'] >= 894.800000 && feature.properties['GARUDA'] <= 1210.000000 ) {
+                return {
+                pane: 'pane_PartaiGardaRepublikIndonesia_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(247,247,247,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GARUDA'] >= 1210.000000 && feature.properties['GARUDA'] <= 1320.000000 ) {
+                return {
+                pane: 'pane_PartaiGardaRepublikIndonesia_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(178,171,210,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GARUDA'] >= 1320.000000 && feature.properties['GARUDA'] <= 1328.000000 ) {
+                return {
+                pane: 'pane_PartaiGardaRepublikIndonesia_8',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(94,60,153,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiGardaRepublikIndonesia_8');
+        map.getPane('pane_PartaiGardaRepublikIndonesia_8').style.zIndex = 408;
+        map.getPane('pane_PartaiGardaRepublikIndonesia_8').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiGardaRepublikIndonesia_8 = new L.geoJson(json_PartaiGardaRepublikIndonesia_8, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiGardaRepublikIndonesia_8',
+            layerName: 'layer_PartaiGardaRepublikIndonesia_8',
+            pane: 'pane_PartaiGardaRepublikIndonesia_8',
+            onEachFeature: pop_PartaiGardaRepublikIndonesia_8,
+            style: style_PartaiGardaRepublikIndonesia_8_0,
+        });
+        bounds_group.addLayer(layer_PartaiGardaRepublikIndonesia_8);
+        map.addLayer(layer_PartaiGardaRepublikIndonesia_8);
+        function pop_PartaiHatiNuraniRakyat_9(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">HANURA</th>\
+                        <td>' + (feature.properties['HANURA'] !== null ? autolinker.link(feature.properties['HANURA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiHatiNuraniRakyat_9_0(feature) {
+            if (feature.properties['HANURA'] >= 341.000000 && feature.properties['HANURA'] <= 430.600000 ) {
+                return {
+                pane: 'pane_PartaiHatiNuraniRakyat_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(208,28,139,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['HANURA'] >= 430.600000 && feature.properties['HANURA'] <= 675.000000 ) {
+                return {
+                pane: 'pane_PartaiHatiNuraniRakyat_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(241,182,218,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['HANURA'] >= 675.000000 && feature.properties['HANURA'] <= 868.600000 ) {
+                return {
+                pane: 'pane_PartaiHatiNuraniRakyat_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(247,247,247,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['HANURA'] >= 868.600000 && feature.properties['HANURA'] <= 1048.200000 ) {
+                return {
+                pane: 'pane_PartaiHatiNuraniRakyat_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(184,225,134,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['HANURA'] >= 1048.200000 && feature.properties['HANURA'] <= 1493.000000 ) {
+                return {
+                pane: 'pane_PartaiHatiNuraniRakyat_9',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(77,172,38,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiHatiNuraniRakyat_9');
+        map.getPane('pane_PartaiHatiNuraniRakyat_9').style.zIndex = 409;
+        map.getPane('pane_PartaiHatiNuraniRakyat_9').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiHatiNuraniRakyat_9 = new L.geoJson(json_PartaiHatiNuraniRakyat_9, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiHatiNuraniRakyat_9',
+            layerName: 'layer_PartaiHatiNuraniRakyat_9',
+            pane: 'pane_PartaiHatiNuraniRakyat_9',
+            onEachFeature: pop_PartaiHatiNuraniRakyat_9,
+            style: style_PartaiHatiNuraniRakyat_9_0,
+        });
+        bounds_group.addLayer(layer_PartaiHatiNuraniRakyat_9);
+        map.addLayer(layer_PartaiHatiNuraniRakyat_9);
+        function pop_PartaiKebangkitanNusantara_10(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PKN</th>\
+                        <td>' + (feature.properties['PKN'] !== null ? autolinker.link(feature.properties['PKN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiKebangkitanNusantara_10_0(feature) {
+            if (feature.properties['PKN'] >= 238.000000 && feature.properties['PKN'] <= 374.800000 ) {
+                return {
+                pane: 'pane_PartaiKebangkitanNusantara_10',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(123,50,148,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PKN'] >= 374.800000 && feature.properties['PKN'] <= 698.200000 ) {
+                return {
+                pane: 'pane_PartaiKebangkitanNusantara_10',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(194,165,207,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PKN'] >= 698.200000 && feature.properties['PKN'] <= 953.800000 ) {
+                return {
+                pane: 'pane_PartaiKebangkitanNusantara_10',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(247,247,247,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PKN'] >= 953.800000 && feature.properties['PKN'] <= 1048.800000 ) {
+                return {
+                pane: 'pane_PartaiKebangkitanNusantara_10',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(166,219,160,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PKN'] >= 1048.800000 && feature.properties['PKN'] <= 1052.000000 ) {
+                return {
+                pane: 'pane_PartaiKebangkitanNusantara_10',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,136,55,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiKebangkitanNusantara_10');
+        map.getPane('pane_PartaiKebangkitanNusantara_10').style.zIndex = 410;
+        map.getPane('pane_PartaiKebangkitanNusantara_10').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiKebangkitanNusantara_10 = new L.geoJson(json_PartaiKebangkitanNusantara_10, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiKebangkitanNusantara_10',
+            layerName: 'layer_PartaiKebangkitanNusantara_10',
+            pane: 'pane_PartaiKebangkitanNusantara_10',
+            onEachFeature: pop_PartaiKebangkitanNusantara_10,
+            style: style_PartaiKebangkitanNusantara_10_0,
+        });
+        bounds_group.addLayer(layer_PartaiKebangkitanNusantara_10);
+        map.addLayer(layer_PartaiKebangkitanNusantara_10);
+        function pop_PartaiKeadilanSejahtera_11(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PKS</th>\
+                        <td>' + (feature.properties['PKS'] !== null ? autolinker.link(feature.properties['PKS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiKeadilanSejahtera_11_0(feature) {
+            if (feature.properties['PKS'] >= 28663.000000 && feature.properties['PKS'] <= 30607.800000 ) {
+                return {
+                pane: 'pane_PartaiKeadilanSejahtera_11',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,240,217,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PKS'] >= 30607.800000 && feature.properties['PKS'] <= 35975.000000 ) {
+                return {
+                pane: 'pane_PartaiKeadilanSejahtera_11',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,204,138,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PKS'] >= 35975.000000 && feature.properties['PKS'] <= 57568.200000 ) {
+                return {
+                pane: 'pane_PartaiKeadilanSejahtera_11',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,141,89,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PKS'] >= 57568.200000 && feature.properties['PKS'] <= 85661.200000 ) {
+                return {
+                pane: 'pane_PartaiKeadilanSejahtera_11',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,74,51,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PKS'] >= 85661.200000 && feature.properties['PKS'] <= 87998.000000 ) {
+                return {
+                pane: 'pane_PartaiKeadilanSejahtera_11',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(179,0,0,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiKeadilanSejahtera_11');
+        map.getPane('pane_PartaiKeadilanSejahtera_11').style.zIndex = 411;
+        map.getPane('pane_PartaiKeadilanSejahtera_11').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiKeadilanSejahtera_11 = new L.geoJson(json_PartaiKeadilanSejahtera_11, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiKeadilanSejahtera_11',
+            layerName: 'layer_PartaiKeadilanSejahtera_11',
+            pane: 'pane_PartaiKeadilanSejahtera_11',
+            onEachFeature: pop_PartaiKeadilanSejahtera_11,
+            style: style_PartaiKeadilanSejahtera_11_0,
+        });
+        bounds_group.addLayer(layer_PartaiKeadilanSejahtera_11);
+        map.addLayer(layer_PartaiKeadilanSejahtera_11);
+        function pop_PartaiGelombangRakyatIndonesia_12(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">GELORA</th>\
+                        <td>' + (feature.properties['GELORA'] !== null ? autolinker.link(feature.properties['GELORA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiGelombangRakyatIndonesia_12_0(feature) {
+            if (feature.properties['GELORA'] >= 1511.000000 && feature.properties['GELORA'] <= 1512.600000 ) {
+                return {
+                pane: 'pane_PartaiGelombangRakyatIndonesia_12',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(11,4,5,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GELORA'] >= 1512.600000 && feature.properties['GELORA'] <= 2485.600000 ) {
+                return {
+                pane: 'pane_PartaiGelombangRakyatIndonesia_12',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(62,53,107,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GELORA'] >= 2485.600000 && feature.properties['GELORA'] <= 3184.800000 ) {
+                return {
+                pane: 'pane_PartaiGelombangRakyatIndonesia_12',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(53,123,163,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GELORA'] >= 3184.800000 && feature.properties['GELORA'] <= 3271.400000 ) {
+                return {
+                pane: 'pane_PartaiGelombangRakyatIndonesia_12',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(75,194,173,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GELORA'] >= 3271.400000 && feature.properties['GELORA'] <= 3313.000000 ) {
+                return {
+                pane: 'pane_PartaiGelombangRakyatIndonesia_12',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(222,245,229,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiGelombangRakyatIndonesia_12');
+        map.getPane('pane_PartaiGelombangRakyatIndonesia_12').style.zIndex = 412;
+        map.getPane('pane_PartaiGelombangRakyatIndonesia_12').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiGelombangRakyatIndonesia_12 = new L.geoJson(json_PartaiGelombangRakyatIndonesia_12, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiGelombangRakyatIndonesia_12',
+            layerName: 'layer_PartaiGelombangRakyatIndonesia_12',
+            pane: 'pane_PartaiGelombangRakyatIndonesia_12',
+            onEachFeature: pop_PartaiGelombangRakyatIndonesia_12,
+            style: style_PartaiGelombangRakyatIndonesia_12_0,
+        });
+        bounds_group.addLayer(layer_PartaiGelombangRakyatIndonesia_12);
+        map.addLayer(layer_PartaiGelombangRakyatIndonesia_12);
+        function pop_PartaiBuruh_13(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">BUR</th>\
+                        <td>' + (feature.properties['BUR'] !== null ? autolinker.link(feature.properties['BUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiBuruh_13_0(feature) {
+            if (feature.properties['BUR'] >= 1272.000000 && feature.properties['BUR'] <= 2110.400000 ) {
+                return {
+                pane: 'pane_PartaiBuruh_13',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,0,4,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['BUR'] >= 2110.400000 && feature.properties['BUR'] <= 2509.000000 ) {
+                return {
+                pane: 'pane_PartaiBuruh_13',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(80,18,123,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['BUR'] >= 2509.000000 && feature.properties['BUR'] <= 3109.000000 ) {
+                return {
+                pane: 'pane_PartaiBuruh_13',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(182,55,122,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['BUR'] >= 3109.000000 && feature.properties['BUR'] <= 4115.200000 ) {
+                return {
+                pane: 'pane_PartaiBuruh_13',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(251,135,97,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['BUR'] >= 4115.200000 && feature.properties['BUR'] <= 5296.000000 ) {
+                return {
+                pane: 'pane_PartaiBuruh_13',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,253,191,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiBuruh_13');
+        map.getPane('pane_PartaiBuruh_13').style.zIndex = 413;
+        map.getPane('pane_PartaiBuruh_13').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiBuruh_13 = new L.geoJson(json_PartaiBuruh_13, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiBuruh_13',
+            layerName: 'layer_PartaiBuruh_13',
+            pane: 'pane_PartaiBuruh_13',
+            onEachFeature: pop_PartaiBuruh_13,
+            style: style_PartaiBuruh_13_0,
+        });
+        bounds_group.addLayer(layer_PartaiBuruh_13);
+        map.addLayer(layer_PartaiBuruh_13);
+        function pop_PartaiNasDem_14(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NASDEM</th>\
+                        <td>' + (feature.properties['NASDEM'] !== null ? autolinker.link(feature.properties['NASDEM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiNasDem_14_0(feature) {
+            if (feature.properties['NASDEM'] >= 10336.000000 && feature.properties['NASDEM'] <= 11356.000000 ) {
+                return {
+                pane: 'pane_PartaiNasDem_14',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(240,249,232,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['NASDEM'] >= 11356.000000 && feature.properties['NASDEM'] <= 14402.800000 ) {
+                return {
+                pane: 'pane_PartaiNasDem_14',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(186,228,188,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['NASDEM'] >= 14402.800000 && feature.properties['NASDEM'] <= 26851.200000 ) {
+                return {
+                pane: 'pane_PartaiNasDem_14',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(123,204,196,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['NASDEM'] >= 26851.200000 && feature.properties['NASDEM'] <= 44163.000000 ) {
+                return {
+                pane: 'pane_PartaiNasDem_14',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(67,162,202,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['NASDEM'] >= 44163.000000 && feature.properties['NASDEM'] <= 49887.000000 ) {
+                return {
+                pane: 'pane_PartaiNasDem_14',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,104,172,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiNasDem_14');
+        map.getPane('pane_PartaiNasDem_14').style.zIndex = 414;
+        map.getPane('pane_PartaiNasDem_14').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiNasDem_14 = new L.geoJson(json_PartaiNasDem_14, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiNasDem_14',
+            layerName: 'layer_PartaiNasDem_14',
+            pane: 'pane_PartaiNasDem_14',
+            onEachFeature: pop_PartaiNasDem_14,
+            style: style_PartaiNasDem_14_0,
+        });
+        bounds_group.addLayer(layer_PartaiNasDem_14);
+        map.addLayer(layer_PartaiNasDem_14);
+        function pop_PartaiGolonganKarya_15(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">GOLKAR</th>\
+                        <td>' + (feature.properties['GOLKAR'] !== null ? autolinker.link(feature.properties['GOLKAR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiGolonganKarya_15_0(feature) {
+            if (feature.properties['GOLKAR'] >= 18553.000000 && feature.properties['GOLKAR'] <= 30938.600000 ) {
+                return {
+                pane: 'pane_PartaiGolonganKarya_15',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,32,77,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GOLKAR'] >= 30938.600000 && feature.properties['GOLKAR'] <= 50808.600000 ) {
+                return {
+                pane: 'pane_PartaiGolonganKarya_15',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(65,77,107,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GOLKAR'] >= 50808.600000 && feature.properties['GOLKAR'] <= 72128.600000 ) {
+                return {
+                pane: 'pane_PartaiGolonganKarya_15',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(125,124,120,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GOLKAR'] >= 72128.600000 && feature.properties['GOLKAR'] <= 90054.200000 ) {
+                return {
+                pane: 'pane_PartaiGolonganKarya_15',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(190,175,111,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GOLKAR'] >= 90054.200000 && feature.properties['GOLKAR'] <= 100931.000000 ) {
+                return {
+                pane: 'pane_PartaiGolonganKarya_15',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,234,70,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiGolonganKarya_15');
+        map.getPane('pane_PartaiGolonganKarya_15').style.zIndex = 415;
+        map.getPane('pane_PartaiGolonganKarya_15').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiGolonganKarya_15 = new L.geoJson(json_PartaiGolonganKarya_15, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiGolonganKarya_15',
+            layerName: 'layer_PartaiGolonganKarya_15',
+            pane: 'pane_PartaiGolonganKarya_15',
+            onEachFeature: pop_PartaiGolonganKarya_15,
+            style: style_PartaiGolonganKarya_15_0,
+        });
+        bounds_group.addLayer(layer_PartaiGolonganKarya_15);
+        map.addLayer(layer_PartaiGolonganKarya_15);
+        function pop_PartaiDemokrasiIndonesiaPerjuangan_16(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PDIP</th>\
+                        <td>' + (feature.properties['PDIP'] !== null ? autolinker.link(feature.properties['PDIP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiDemokrasiIndonesiaPerjuangan_16_0(feature) {
+            if (feature.properties['PDIP'] >= 75917.000000 && feature.properties['PDIP'] <= 78073.000000 ) {
+                return {
+                pane: 'pane_PartaiDemokrasiIndonesiaPerjuangan_16',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(237,248,251,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PDIP'] >= 78073.000000 && feature.properties['PDIP'] <= 87589.800000 ) {
+                return {
+                pane: 'pane_PartaiDemokrasiIndonesiaPerjuangan_16',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(179,205,227,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PDIP'] >= 87589.800000 && feature.properties['PDIP'] <= 115182.600000 ) {
+                return {
+                pane: 'pane_PartaiDemokrasiIndonesiaPerjuangan_16',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(140,150,198,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PDIP'] >= 115182.600000 && feature.properties['PDIP'] <= 157729.400000 ) {
+                return {
+                pane: 'pane_PartaiDemokrasiIndonesiaPerjuangan_16',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(136,86,167,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PDIP'] >= 157729.400000 && feature.properties['PDIP'] <= 198271.000000 ) {
+                return {
+                pane: 'pane_PartaiDemokrasiIndonesiaPerjuangan_16',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(129,15,124,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiDemokrasiIndonesiaPerjuangan_16');
+        map.getPane('pane_PartaiDemokrasiIndonesiaPerjuangan_16').style.zIndex = 416;
+        map.getPane('pane_PartaiDemokrasiIndonesiaPerjuangan_16').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiDemokrasiIndonesiaPerjuangan_16 = new L.geoJson(json_PartaiDemokrasiIndonesiaPerjuangan_16, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiDemokrasiIndonesiaPerjuangan_16',
+            layerName: 'layer_PartaiDemokrasiIndonesiaPerjuangan_16',
+            pane: 'pane_PartaiDemokrasiIndonesiaPerjuangan_16',
+            onEachFeature: pop_PartaiDemokrasiIndonesiaPerjuangan_16,
+            style: style_PartaiDemokrasiIndonesiaPerjuangan_16_0,
+        });
+        bounds_group.addLayer(layer_PartaiDemokrasiIndonesiaPerjuangan_16);
+        map.addLayer(layer_PartaiDemokrasiIndonesiaPerjuangan_16);
+        function pop_PartaiGerakanIndonesiaRaya_17(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">GERINDRA</th>\
+                        <td>' + (feature.properties['GERINDRA'] !== null ? autolinker.link(feature.properties['GERINDRA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiGerakanIndonesiaRaya_17_0(feature) {
+            if (feature.properties['GERINDRA'] >= 30753.000000 && feature.properties['GERINDRA'] <= 38236.200000 ) {
+                return {
+                pane: 'pane_PartaiGerakanIndonesiaRaya_17',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(237,248,251,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GERINDRA'] >= 38236.200000 && feature.properties['GERINDRA'] <= 48609.000000 ) {
+                return {
+                pane: 'pane_PartaiGerakanIndonesiaRaya_17',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(178,226,226,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GERINDRA'] >= 48609.000000 && feature.properties['GERINDRA'] <= 60031.400000 ) {
+                return {
+                pane: 'pane_PartaiGerakanIndonesiaRaya_17',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(102,194,164,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GERINDRA'] >= 60031.400000 && feature.properties['GERINDRA'] <= 70603.400000 ) {
+                return {
+                pane: 'pane_PartaiGerakanIndonesiaRaya_17',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(44,162,95,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['GERINDRA'] >= 70603.400000 && feature.properties['GERINDRA'] <= 78365.000000 ) {
+                return {
+                pane: 'pane_PartaiGerakanIndonesiaRaya_17',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,109,44,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiGerakanIndonesiaRaya_17');
+        map.getPane('pane_PartaiGerakanIndonesiaRaya_17').style.zIndex = 417;
+        map.getPane('pane_PartaiGerakanIndonesiaRaya_17').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiGerakanIndonesiaRaya_17 = new L.geoJson(json_PartaiGerakanIndonesiaRaya_17, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiGerakanIndonesiaRaya_17',
+            layerName: 'layer_PartaiGerakanIndonesiaRaya_17',
+            pane: 'pane_PartaiGerakanIndonesiaRaya_17',
+            onEachFeature: pop_PartaiGerakanIndonesiaRaya_17,
+            style: style_PartaiGerakanIndonesiaRaya_17_0,
+        });
+        bounds_group.addLayer(layer_PartaiGerakanIndonesiaRaya_17);
+        map.addLayer(layer_PartaiGerakanIndonesiaRaya_17);
+        function pop_PartaiKebangkitanBangsa_18(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kab_Kot</th>\
+                        <td>' + (feature.properties['Kab_Kot'] !== null ? autolinker.link(feature.properties['Kab_Kot'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">PKB</th>\
+                        <td>' + (feature.properties['PKB'] !== null ? autolinker.link(feature.properties['PKB'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PartaiKebangkitanBangsa_18_0(feature) {
+            if (feature.properties['PKB'] >= 10128.000000 && feature.properties['PKB'] <= 32768.000000 ) {
+                return {
+                pane: 'pane_PartaiKebangkitanBangsa_18',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(166,97,26,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PKB'] >= 32768.000000 && feature.properties['PKB'] <= 45895.000000 ) {
+                return {
+                pane: 'pane_PartaiKebangkitanBangsa_18',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(223,194,125,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PKB'] >= 45895.000000 && feature.properties['PKB'] <= 55725.400000 ) {
+                return {
+                pane: 'pane_PartaiKebangkitanBangsa_18',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(245,245,245,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PKB'] >= 55725.400000 && feature.properties['PKB'] <= 67042.000000 ) {
+                return {
+                pane: 'pane_PartaiKebangkitanBangsa_18',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(128,205,193,1.0)',
+                interactive: true,
+            }
+            }
+            if (feature.properties['PKB'] >= 67042.000000 && feature.properties['PKB'] <= 83194.000000 ) {
+                return {
+                pane: 'pane_PartaiKebangkitanBangsa_18',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(1,133,113,1.0)',
+                interactive: true,
+            }
+            }
+        }
+        map.createPane('pane_PartaiKebangkitanBangsa_18');
+        map.getPane('pane_PartaiKebangkitanBangsa_18').style.zIndex = 418;
+        map.getPane('pane_PartaiKebangkitanBangsa_18').style['mix-blend-mode'] = 'normal';
+        var layer_PartaiKebangkitanBangsa_18 = new L.geoJson(json_PartaiKebangkitanBangsa_18, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PartaiKebangkitanBangsa_18',
+            layerName: 'layer_PartaiKebangkitanBangsa_18',
+            pane: 'pane_PartaiKebangkitanBangsa_18',
+            onEachFeature: pop_PartaiKebangkitanBangsa_18,
+            style: style_PartaiKebangkitanBangsa_18_0,
+        });
+        bounds_group.addLayer(layer_PartaiKebangkitanBangsa_18);
+        map.addLayer(layer_PartaiKebangkitanBangsa_18);
+        var overlaysTree = [
+            {label: 'Partai Kebangkitan Bangsa<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiKebangkitanBangsa_18_10128327680.png" /></td><td>10128 - 32768</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiKebangkitanBangsa_18_32768458951.png" /></td><td>32768 - 45895</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiKebangkitanBangsa_18_45895557252.png" /></td><td>45895 - 55725</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiKebangkitanBangsa_18_55725670423.png" /></td><td>55725 - 67042</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiKebangkitanBangsa_18_67042831944.png" /></td><td>67042 - 83194</td></tr></table>', layer: layer_PartaiKebangkitanBangsa_18},
+            {label: 'Partai Gerakan Indonesia Raya<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiGerakanIndonesiaRaya_17_30753382360.png" /></td><td>30753 - 38236</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGerakanIndonesiaRaya_17_38236486091.png" /></td><td>38236 - 48609</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGerakanIndonesiaRaya_17_48609600312.png" /></td><td>48609 - 60031</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGerakanIndonesiaRaya_17_60031706033.png" /></td><td>60031 - 70603</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGerakanIndonesiaRaya_17_70603783654.png" /></td><td>70603 - 78365</td></tr></table>', layer: layer_PartaiGerakanIndonesiaRaya_17},
+            {label: 'Partai Demokrasi Indonesia Perjuangan<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiDemokrasiIndonesiaPerjuangan_16_75917780730.png" /></td><td>75917 - 78073</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiDemokrasiIndonesiaPerjuangan_16_78073875901.png" /></td><td>78073 - 87590</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiDemokrasiIndonesiaPerjuangan_16_875901151832.png" /></td><td>87590 - 115183</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiDemokrasiIndonesiaPerjuangan_16_1151831577293.png" /></td><td>115183 - 157729</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiDemokrasiIndonesiaPerjuangan_16_1577291982714.png" /></td><td>157729 - 198271</td></tr></table>', layer: layer_PartaiDemokrasiIndonesiaPerjuangan_16},
+            {label: 'Partai Golongan Karya<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiGolonganKarya_15_18553309390.png" /></td><td>18553 - 30939</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGolonganKarya_15_30939508091.png" /></td><td>30939 - 50809</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGolonganKarya_15_50809721292.png" /></td><td>50809 - 72129</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGolonganKarya_15_72129900543.png" /></td><td>72129 - 90054</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGolonganKarya_15_900541009314.png" /></td><td>90054 - 100931</td></tr></table>', layer: layer_PartaiGolonganKarya_15},
+            {label: 'Partai NasDem<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiNasDem_14_10336113560.png" /></td><td>10336 - 11356</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiNasDem_14_11356144031.png" /></td><td>11356 - 14403</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiNasDem_14_14403268512.png" /></td><td>14403 - 26851</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiNasDem_14_26851441633.png" /></td><td>26851 - 44163</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiNasDem_14_44163498874.png" /></td><td>44163 - 49887</td></tr></table>', layer: layer_PartaiNasDem_14},
+            {label: 'Partai Buruh<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiBuruh_13_127221100.png" /></td><td>1272 - 2110</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiBuruh_13_211025091.png" /></td><td>2110 - 2509</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiBuruh_13_250931092.png" /></td><td>2509 - 3109</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiBuruh_13_310941153.png" /></td><td>3109 - 4115</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiBuruh_13_411552964.png" /></td><td>4115 - 5296</td></tr></table>', layer: layer_PartaiBuruh_13},
+            {label: 'Partai Gelombang Rakyat Indonesia<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiGelombangRakyatIndonesia_12_1511151260.png" /></td><td>1511 - 1512.6</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGelombangRakyatIndonesia_12_15126248561.png" /></td><td>1512.6 - 2485.6</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGelombangRakyatIndonesia_12_24856318482.png" /></td><td>2485.6 - 3184.8</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGelombangRakyatIndonesia_12_31848327143.png" /></td><td>3184.8 - 3271.4</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGelombangRakyatIndonesia_12_3271433134.png" /></td><td>3271.4 - 3313</td></tr></table>', layer: layer_PartaiGelombangRakyatIndonesia_12},
+            {label: 'Partai Keadilan Sejahtera<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiKeadilanSejahtera_11_28663306080.png" /></td><td>28663 - 30608</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiKeadilanSejahtera_11_30608359751.png" /></td><td>30608 - 35975</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiKeadilanSejahtera_11_35975575682.png" /></td><td>35975 - 57568</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiKeadilanSejahtera_11_57568856613.png" /></td><td>57568 - 85661</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiKeadilanSejahtera_11_85661879984.png" /></td><td>85661 - 87998</td></tr></table>', layer: layer_PartaiKeadilanSejahtera_11},
+            {label: 'Partai Kebangkitan Nusantara<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiKebangkitanNusantara_10_23837480.png" /></td><td>238 - 374.8</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiKebangkitanNusantara_10_374869821.png" /></td><td>374.8 - 698.2</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiKebangkitanNusantara_10_698295382.png" /></td><td>698.2 - 953.8</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiKebangkitanNusantara_10_9538104883.png" /></td><td>953.8 - 1048.8</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiKebangkitanNusantara_10_1048810524.png" /></td><td>1048.8 - 1052</td></tr></table>', layer: layer_PartaiKebangkitanNusantara_10},
+            {label: 'Partai Hati Nurani Rakyat<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiHatiNuraniRakyat_9_3414310.png" /></td><td>341 - 431</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiHatiNuraniRakyat_9_4316751.png" /></td><td>431 - 675</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiHatiNuraniRakyat_9_6758692.png" /></td><td>675 - 869</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiHatiNuraniRakyat_9_86910483.png" /></td><td>869 - 1048</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiHatiNuraniRakyat_9_104814934.png" /></td><td>1048 - 1493</td></tr></table>', layer: layer_PartaiHatiNuraniRakyat_9},
+            {label: 'Partai Garda Republik Indonesia<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiGardaRepublikIndonesia_8_47851960.png" /></td><td>478 - 519.6</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGardaRepublikIndonesia_8_519689481.png" /></td><td>519.6 - 894.8</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGardaRepublikIndonesia_8_894812102.png" /></td><td>894.8 - 1210</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGardaRepublikIndonesia_8_121013203.png" /></td><td>1210 - 1320</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiGardaRepublikIndonesia_8_132013284.png" /></td><td>1320 - 1328</td></tr></table>', layer: layer_PartaiGardaRepublikIndonesia_8},
+            {label: 'Partai Amanat Nasional<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiAmanatNasional_7_18514206240.png" /></td><td>18514 - 20624</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiAmanatNasional_7_20624318791.png" /></td><td>20624 - 31879</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiAmanatNasional_7_31879399692.png" /></td><td>31879 - 39969</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiAmanatNasional_7_39969488183.png" /></td><td>39969 - 48818</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiAmanatNasional_7_48818785904.png" /></td><td>48818 - 78590</td></tr></table>', layer: layer_PartaiAmanatNasional_7},
+            {label: 'Partai Bulan Bintang<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiBulanBintang_6_2702920.png" /></td><td>270 - 292</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiBulanBintang_6_2924221.png" /></td><td>292 - 422</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiBulanBintang_6_4225992.png" /></td><td>422 - 599</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiBulanBintang_6_5998803.png" /></td><td>599 - 880</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiBulanBintang_6_88014374.png" /></td><td>880 - 1437</td></tr></table>', layer: layer_PartaiBulanBintang_6},
+            {label: 'Partai Demokrat<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiDemokrat_5_305746370.png" /></td><td>3057 - 4637</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiDemokrat_5_463787001.png" /></td><td>4637 - 8700</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiDemokrat_5_8700119352.png" /></td><td>8700 - 11935</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiDemokrat_5_11935138653.png" /></td><td>11935 - 13865</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiDemokrat_5_13865168504.png" /></td><td>13865 - 16850</td></tr></table>', layer: layer_PartaiDemokrat_5},
+            {label: 'Partai Solidaritas Indonesia<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiSolidaritasIndonesia_4_7627113760.png" /></td><td>7627 - 11376</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiSolidaritasIndonesia_4_11376136101.png" /></td><td>11376 - 13610</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiSolidaritasIndonesia_4_13610147612.png" /></td><td>13610 - 14761</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiSolidaritasIndonesia_4_14761166313.png" /></td><td>14761 - 16631</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiSolidaritasIndonesia_4_16631223924.png" /></td><td>16631 - 22392</td></tr></table>', layer: layer_PartaiSolidaritasIndonesia_4},
+            {label: 'Partai Perindo<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiPerindo_3_78317220.png" /></td><td>783 - 1722</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiPerindo_3_172220551.png" /></td><td>1722 - 2055</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiPerindo_3_205521442.png" /></td><td>2055 - 2144</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiPerindo_3_214423833.png" /></td><td>2144 - 2383</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiPerindo_3_238331944.png" /></td><td>2383 - 3194</td></tr></table>', layer: layer_PartaiPerindo_3},
+            {label: 'Partai Persatuan Pembangunan<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiPersatuanPembangunan_2_318539150.png" /></td><td>3185 - 3915</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiPersatuanPembangunan_2_391569711.png" /></td><td>3915 - 6971</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiPersatuanPembangunan_2_6971112902.png" /></td><td>6971 - 11290</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiPersatuanPembangunan_2_11290152783.png" /></td><td>11290 - 15278</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiPersatuanPembangunan_2_15278168094.png" /></td><td>15278 - 16809</td></tr></table>', layer: layer_PartaiPersatuanPembangunan_2},
+            {label: 'Partai Ummat<br /><table><tr><td style="text-align: center;"><img src="legend/PartaiUmmat_1_472855940.png" /></td><td>4728 - 5594</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiUmmat_1_559487221.png" /></td><td>5594 - 8722</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiUmmat_1_8722125422.png" /></td><td>8722 - 12542</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiUmmat_1_12542160793.png" /></td><td>12542 - 16079</td></tr><tr><td style="text-align: center;"><img src="legend/PartaiUmmat_1_16079189474.png" /></td><td>16079 - 18947</td></tr></table>', layer: layer_PartaiUmmat_1},
+            {label: "Open Street Map", layer: layer_OpenStreetMap_0, radioGroup: 'bm' },]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: false, 
+        });
+        lay.addTo(map);
+		document.addEventListener("DOMContentLoaded", function() {
+            // set new Layers List height which considers toggle icon
+            function newLayersListHeight() {
+                var layerScrollbarElement = document.querySelector('.leaflet-control-layers-scrollbar');
+                if (layerScrollbarElement) {
+                    var layersListElement = document.querySelector('.leaflet-control-layers-list');
+                    var originalHeight = layersListElement.style.height 
+                        || window.getComputedStyle(layersListElement).height;
+                    var newHeight = parseFloat(originalHeight) - 50;
+                    layersListElement.style.height = newHeight + 'px';
+                }
+            }
+            var isLayersListExpanded = true;
+            var controlLayersElement = document.querySelector('.leaflet-control-layers');
+            var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
+            // toggle Collapsed/Expanded and apply new Layers List height
+            toggleLayerControl.addEventListener('click', function() {
+                if (isLayersListExpanded) {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                } else {
+                    controlLayersElement.classList.add('leaflet-control-layers-expanded');
+                }
+                isLayersListExpanded = !isLayersListExpanded;
+                newLayersListHeight()
+            });	
+			// apply new Layers List height if toggle layerstree
+			if (controlLayersElement) {
+				controlLayersElement.addEventListener('click', function(event) {
+					var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
+					if (toggleLayerHeaderPointer) {
+						newLayersListHeight();
+					}
+				});
+			}
+            // Collapsed/Expanded at Start to apply new height
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            // Collapsed touch/small screen
+            var isSmallScreen = window.innerWidth < 650;
+            if (isSmallScreen) {
+                setTimeout(function() {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                    isLayersListExpanded = !isLayersListExpanded;
+                }, 500);
+            }  
+        });       
+        setBounds();
+        map.addControl(new L.Control.Search({
+            layer: layer_PartaiKebangkitanBangsa_18,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'Kab_Kot'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+         // Tambahkan tombol Home
+        L.easyButton('fa-home', function () {
+            map.setView([-7.8731, 110.4243], 10); // Set zoom dan titik tengah
+        }, 'Go to Home').addTo(map);
+        </script>
+    </body>
+</html>
